@@ -92,8 +92,6 @@ class SrtFile:
 
         for caption in self.all_captions:
 
-            time_sum = dt.timedelta()
-
             hour1, minute1, second1, milliseconds1 = self._get_time_information(time)
             hour2, minute2, second2, milliseconds2 = self._get_time_information(caption[CAPTION_START_KEY])
             hour3, minute3, second3, milliseconds3 = self._get_time_information(caption[CAPTION_END_KEY])
@@ -101,8 +99,22 @@ class SrtFile:
             d = dt.timedelta(hours=int(hour1), minutes=int(minute1), seconds=int(second1), milliseconds=int(milliseconds1)) + dt.timedelta(hours=int(hour2), minutes=int(minute2), seconds=int(second2), milliseconds=int(milliseconds2))
             d2 = dt.timedelta(hours=int(hour1), minutes=int(minute1), seconds=int(second1), milliseconds=int(milliseconds1)) + dt.timedelta(hours=int(hour3), minutes=int(minute3), seconds=int(second3), milliseconds=int(milliseconds3))
 
-            caption[CAPTION_START_KEY] = ('0' + str(d)[0:11]).replace(".", ",")
-            caption[CAPTION_END_KEY]   = ('0' + str(d2)[0:11]).replace(".", ",")
+            caption[CAPTION_START_KEY] = self._fix_timestamp(d)
+            caption[CAPTION_END_KEY]   = self._fix_timestamp(d2)
+    
+    def reduce_time_to_timestamps(self,time):
+
+        for caption in self.all_captions:
+
+            hour1, minute1, second1, milliseconds1 = self._get_time_information(time)
+            hour2, minute2, second2, milliseconds2 = self._get_time_information(caption[CAPTION_START_KEY])
+            hour3, minute3, second3, milliseconds3 = self._get_time_information(caption[CAPTION_END_KEY])
+
+            d = dt.timedelta(hours=int(hour2), minutes=int(minute2), seconds=int(second2), milliseconds=int(milliseconds2)) - dt.timedelta(hours=int(hour1), minutes=int(minute1), seconds=int(second1), milliseconds=int(milliseconds1))
+            d2 = dt.timedelta(hours=int(hour3), minutes=int(minute3), seconds=int(second3), milliseconds=int(milliseconds3)) - dt.timedelta(hours=int(hour1), minutes=int(minute1), seconds=int(second1), milliseconds=int(milliseconds1))
+
+            caption[CAPTION_START_KEY] = self._fix_timestamp(d)
+            caption[CAPTION_END_KEY]   = self._fix_timestamp(d2)
 
     def _get_time_information(self,time):
         hour, minute, tmp = time.split(":")
@@ -110,3 +122,6 @@ class SrtFile:
         milliseconds      = tmp.split(",")[1]
 
         return [hour, minute, second, milliseconds]
+
+    def _fix_timestamp(self,timestamp):
+        return ('0' + str(timestamp)[0:11]).replace(".", ",")

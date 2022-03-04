@@ -16,6 +16,13 @@ def add_time_to_captions_timestamps(srt):
 
     srt.add_time_to_timestamps(timestamp)
 
+def reduce_time_to_captions_timestamps(srt):
+    print("Reduce time to captions")
+
+    timestamp = input("Please enter the timestamp value\nEx: 00:19:49,300\n-> ")
+
+    srt.reduce_time_to_timestamps(timestamp)
+
 def save_srt_file(srt):
     print("Saving srt file")
 
@@ -33,6 +40,7 @@ def main():
         "2": add_time_to_captions_timestamps,
         "3": save_srt_file,
         "4": print,
+        "5": reduce_time_to_captions_timestamps
     }
 
     srt = SrtFile("test.srt")
@@ -46,6 +54,7 @@ def main():
         print("2 - Add time to captions timestamps")
         print("3 - Save file")
         print("4 - Print file")
+        print("5 - Reduce time to captions timestamps")
         print("\n0 - Exit the program")
 
         instruction = input("Please enter a value: ")
