@@ -25,4 +25,4 @@ All the instructions are informed in the program
 - [ ] Error verification
 - [ ] Colorful print
 - [ ] Specify interval for changing
-- [ ] Enumeration correctiction
+- [ ] Enumeration correction
