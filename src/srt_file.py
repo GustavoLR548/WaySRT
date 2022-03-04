@@ -1,3 +1,5 @@
+import datetime as dt
+
 TEXT_KEY           = "text"
 CAPTION_NUMBER_KEY = "caption_number"
 CAPTION_START_KEY  = "caption_start"
@@ -45,10 +47,9 @@ class SrtFile:
             if not curr_line:
                 self.all_captions.append(caption_information)
 
+            elif curr_line.isnumeric():
                 caption_information = {}
                 caption_information[TEXT_KEY] = []
-
-            elif curr_line.isnumeric():
                 caption_information[CAPTION_NUMBER_KEY] = int(curr_line)
 
             elif "-->" in curr_line:
@@ -87,5 +88,25 @@ class SrtFile:
             caption[CAPTION_NUMBER_KEY] = first_number
             first_number += 1
 
-    def add_time_to_timestamps(self):
-        pass
+    def add_time_to_timestamps(self,time):
+
+        for caption in self.all_captions:
+
+            time_sum = dt.timedelta()
+
+            hour1, minute1, second1, milliseconds1 = self._get_time_information(time)
+            hour2, minute2, second2, milliseconds2 = self._get_time_information(caption[CAPTION_START_KEY])
+            hour3, minute3, second3, milliseconds3 = self._get_time_information(caption[CAPTION_END_KEY])
+
+            d = dt.timedelta(hours=int(hour1), minutes=int(minute1), seconds=int(second1), milliseconds=int(milliseconds1)) + dt.timedelta(hours=int(hour2), minutes=int(minute2), seconds=int(second2), milliseconds=int(milliseconds2))
+            d2 = dt.timedelta(hours=int(hour1), minutes=int(minute1), seconds=int(second1), milliseconds=int(milliseconds1)) + dt.timedelta(hours=int(hour3), minutes=int(minute3), seconds=int(second3), milliseconds=int(milliseconds3))
+
+            caption[CAPTION_START_KEY] = ('0' + str(d)[0:11]).replace(".", ",")
+            caption[CAPTION_END_KEY]   = ('0' + str(d2)[0:11]).replace(".", ",")
+
+    def _get_time_information(self,time):
+        hour, minute, tmp = time.split(":")
+        second            = tmp.split(",")[0]
+        milliseconds      = tmp.split(",")[1]
+
+        return [hour, minute, second, milliseconds]

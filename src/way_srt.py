@@ -12,6 +12,10 @@ def change_captions_numeration(srt):
 def add_time_to_captions_timestamps(srt):
     print("Add time to captions")
 
+    timestamp = input("Please enter the timestamp value\nEx: 00:19:49,300\n-> ")
+
+    srt.add_time_to_timestamps(timestamp)
+
 def save_srt_file(srt):
     print("Saving srt file")
 
