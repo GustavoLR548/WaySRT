@@ -1,4 +1,5 @@
 from srt_file import SrtFile
+import sys
 
 def change_captions_numeration(srt):
     print("Change captions numeration")
@@ -33,7 +34,7 @@ def save_srt_file(srt):
 def default(_srt):
     print("Invalid command, please try again")
 
-def main():
+def main(file_name):
     
     switch = {
         "1": change_captions_numeration,
@@ -44,7 +45,7 @@ def main():
         
     }
 
-    srt = SrtFile("test.srt")
+    srt = SrtFile(file_name)
 
     instruction = "0"
 
@@ -70,4 +71,11 @@ def main():
     print("Bye, see you next time")
 
 if __name__ == "__main__":
-    main()
+
+    if len(sys.argv) < 2: 
+        print('Error! Please specify the file')
+        sys.exit()
+
+    print(f'Reading the file: {sys.argv[1]}...')
+
+    main(sys.argv[1])
