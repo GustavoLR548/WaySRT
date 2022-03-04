@@ -38,9 +38,10 @@ def main():
     switch = {
         "1": change_captions_numeration,
         "2": add_time_to_captions_timestamps,
-        "3": save_srt_file,
+        "3": reduce_time_to_captions_timestamps,
         "4": print,
-        "5": reduce_time_to_captions_timestamps
+        "5": save_srt_file,
+        
     }
 
     srt = SrtFile("test.srt")
@@ -52,9 +53,9 @@ def main():
         print("What do you like to do?")
         print("1 - Change captions numbering")
         print("2 - Add time to captions timestamps")
-        print("3 - Save file")
+        print("3 - Reduce time to captions timestamps")
         print("4 - Print file")
-        print("5 - Reduce time to captions timestamps")
+        print("5 - Save file")
         print("\n0 - Exit the program")
 
         instruction = input("Please enter a value: ")
