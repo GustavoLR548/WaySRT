@@ -7,7 +7,7 @@ A simple editor for captions in .SRT file extension
 The program doesn't use any external dependecies, just run:
 
 ```
-python way_srt.py
+python way_srt.py {file_name.srt}
 ```
 
 All the instructions are informed in the program
