@@ -5,14 +5,15 @@ class SrtFile:
     START_TIME = 0
     END_TIME = 1
 
-    TEXT_KEY           = "text"
+    CAPTION_TEXT_KEY   = "text"
     CAPTION_NUMBER_KEY = "caption_number"
     CAPTION_START_KEY  = "caption_start"
     CAPTION_END_KEY    = "caption_end"
 
-    def __init__(self,file_name):
+    def __init__(self,file_name: str):
 
-        self.file_name = file_name 
+        self.file_name = file_name.strip()
+        self.num_of_captions = 0
         self.all_captions = []
 
         self._read_file()      
@@ -23,7 +24,7 @@ class SrtFile:
             file_lines = srt_file.readlines()
 
             caption_information = {}
-            caption_information[SrtFile.TEXT_KEY] = []
+            caption_information[SrtFile.CAPTION_TEXT_KEY] = []
 
             for line in file_lines:
 
@@ -31,10 +32,11 @@ class SrtFile:
 
                 if not curr_line:
                     self.all_captions.append(caption_information)
+                    self.num_of_captions += 1
 
                 elif curr_line.isnumeric():
                     caption_information = {}
-                    caption_information[SrtFile.TEXT_KEY] = []
+                    caption_information[SrtFile.CAPTION_TEXT_KEY] = []
                     caption_information[SrtFile.CAPTION_NUMBER_KEY] = int(curr_line)
 
                 elif "-->" in curr_line:
@@ -46,10 +48,11 @@ class SrtFile:
 
                 else: 
 
-                    caption_information[SrtFile.TEXT_KEY].append(curr_line)
+                    caption_information[SrtFile.CAPTION_TEXT_KEY].append(curr_line)
 
             if not caption_information in self.all_captions:
                 self.all_captions.append(caption_information)
+                self.num_of_captions += 1
 
     def save_file(self):
 
@@ -58,11 +61,11 @@ class SrtFile:
 
         for caption in self.all_captions:
 
-            srt_file.write(str(caption[SrtFile.CAPTION_NUMBER_KEY]) + "\n")
-            srt_file.write(caption[SrtFile.CAPTION_START_KEY] + " --> " + caption[SrtFile.CAPTION_END_KEY] + "\n")
+            srt_file.write(f'{caption[SrtFile.CAPTION_NUMBER_KEY]} \n')
+            srt_file.write(f'{caption[SrtFile.CAPTION_START_KEY]} --> {caption[SrtFile.CAPTION_END_KEY]} \n')
 
-            for line in caption[SrtFile.TEXT_KEY]:
-                srt_file.write(line + "\n")
+            for line in caption[SrtFile.CAPTION_TEXT_KEY]:
+                srt_file.write(f'{line}\n')
 
             srt_file.write("\n")
 
@@ -83,6 +86,29 @@ class SrtFile:
             caption[SrtFile.CAPTION_START_KEY] = self._fix_timestamp(caption_start_timedelta + time_timedelta)
             caption[SrtFile.CAPTION_END_KEY]   = self._fix_timestamp(caption_end_timedelta   + time_timedelta)
     
+    def add_caption_at_the_end(self, texts, caption_duration):
+
+        self.num_of_captions += 1
+        caption_numeration = self.num_of_captions
+
+        start_time = self.all_captions[-1][SrtFile.CAPTION_END_KEY]
+
+        caption_duration_timedelta = self._get_time_information(caption_duration)
+
+        end_time_timedelta = self._get_time_information(start_time)
+        end_time_timedelta += caption_duration_timedelta
+        end_time = self._fix_timestamp(end_time_timedelta)
+
+        caption_information = {
+            SrtFile.CAPTION_NUMBER_KEY : f'{caption_numeration}',
+            SrtFile.CAPTION_START_KEY : f'{start_time}',
+            SrtFile.CAPTION_END_KEY : f'{end_time}'
+        }
+
+        caption_information[SrtFile.CAPTION_TEXT_KEY] = texts
+
+        self.all_captions.append(caption_information)
+
     def reduce_time_to_timestamps(self,time):
 
         for caption in self.all_captions:
@@ -101,20 +127,22 @@ class SrtFile:
 
         return dt.timedelta(hours=int(hour), minutes=int(minute), seconds=int(second), milliseconds=int(milliseconds))
 
-    def _fix_timestamp(self,timestamp):
+    def _fix_timestamp(self,timestamp: dt.timedelta):
         return ('0' + str(timestamp)[0:11]).replace(".", ",")
 
     def __str__(self) -> str:
 
-        string = "\n"        
+        string = "\n"    
+
+        string += f'Number of captions: {self.num_of_captions}\n'    
 
         for caption in self.all_captions:
 
             string += f'Caption number: {caption[SrtFile.CAPTION_NUMBER_KEY]} \n'
-            string += f'Caption start: {caption[SrtFile.CAPTION_START_KEY]} Caption end: {caption[SrtFile.CAPTION_END_KEY]} \n'
+            string += f'Caption start: {caption[SrtFile.CAPTION_START_KEY]} Caption end: {caption[SrtFile.CAPTION_END_KEY]}'
             
             string += '\nCaptions: \n'
-            for line in caption[SrtFile.TEXT_KEY]:
+            for line in caption[SrtFile.CAPTION_TEXT_KEY]:
 
                 string += line + '\n'
 
