@@ -1,7 +1,15 @@
 from srt_file import SrtFile
 import sys
+from os import system, name as os_name
 
-def change_captions_numeration(srt):
+def clear_terminal():
+    system('cls' if os_name == 'nt' else 'clear')
+
+def wait_for_user_input():
+    input("Press enter to continue...")
+    clear_terminal()
+
+def change_captions_numeration(srt: SrtFile):
     print("Change captions numeration")
 
     new_enumeration = input("Please enter the new enumeration: ")
@@ -10,19 +18,23 @@ def change_captions_numeration(srt):
 
     srt.change_captions_numeration(start_enumeration)
 
-def add_time_to_captions_timestamps(srt):
+def add_time_to_captions_timestamps(srt: SrtFile):
     print("Add time to captions")
 
     timestamp = input("Please enter the timestamp value\nEx: 00:19:49,300\n-> ")
 
     srt.add_time_to_timestamps(timestamp)
 
-def reduce_time_to_captions_timestamps(srt):
+    print("Time added to captions")
+
+def reduce_time_to_captions_timestamps(srt: SrtFile):
     print("Reduce time to captions")
 
     timestamp = input("Please enter the timestamp value\nEx: 00:19:49,300\n-> ")
 
     srt.reduce_time_to_timestamps(timestamp)
+
+    print("Time reduced to captions")
 
 def save_srt_file(srt):
     print("Saving srt file")
@@ -34,6 +46,9 @@ def save_srt_file(srt):
 def default(_srt):
     print("Invalid command, please try again")
 
+def quit(_srt):
+    print("Bye, see you next time")
+
 def main(file_name):
     
     switch = {
@@ -42,14 +57,14 @@ def main(file_name):
         "3": reduce_time_to_captions_timestamps,
         "4": print,
         "5": save_srt_file,
-        
+        "0": quit,
     }
 
     srt = SrtFile(file_name)
 
-    instruction = "0"
+    instruction = None
 
-    while True:
+    while instruction != "0":
 
         print("What do you like to do?")
         print("1 - Change captions numbering")
@@ -61,14 +76,11 @@ def main(file_name):
 
         instruction = input("Please enter a value: ")
 
-        if "0" in instruction:
-            break 
-
         case = switch.get(instruction.strip(), default)
 
         case(srt)
 
-    print("Bye, see you next time")
+        wait_for_user_input()
 
 if __name__ == "__main__":
 
