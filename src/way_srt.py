@@ -1,3 +1,4 @@
+from curses.ascii import isblank
 from srt_file import SrtFile
 import sys
 from os import system, name as os_name
@@ -36,12 +37,27 @@ def reduce_time_to_captions_timestamps(srt: SrtFile):
 
     print("Time reduced to captions")
 
-def save_srt_file(srt):
+def save_srt_file(srt: SrtFile):
     print("Saving srt file")
 
     srt.save_file()
 
     print("Saving process completed!")
+
+def add_caption_at_the_end(srt: SrtFile):
+    print("Insert the text")
+
+    texts = []
+
+    string = "0"
+    while string:
+        string = input()
+        texts.append(string)
+
+    texts.pop()
+
+    time = input("Please enter the timestamp value\nEx: 00:19:49,300\n-> ")
+    srt.add_caption_at_the_end(texts,time)
 
 def default(_srt):
     print("Invalid command, please try again")
@@ -57,7 +73,8 @@ def main(file_name):
         "3": reduce_time_to_captions_timestamps,
         "4": print,
         "5": save_srt_file,
-        "0": quit,
+        "6": add_caption_at_the_end,
+        "0": quit
     }
 
     srt = SrtFile(file_name)
@@ -72,6 +89,7 @@ def main(file_name):
         print("3 - Reduce time to captions timestamps")
         print("4 - Print file")
         print("5 - Save file")
+        print("6 - Add caption at the end")
         print("\n0 - Exit the program")
 
         instruction = input("Please enter a value: ")
