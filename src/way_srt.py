@@ -10,6 +10,18 @@ def wait_for_user_input():
     input("Press enter to continue...")
     clear_terminal()
 
+def get_caption_text_list():
+    texts = []
+
+    string = "0"
+    while string:
+        string = input()
+        texts.append(string)
+
+    texts.pop()
+
+    return texts
+
 def change_captions_numeration(srt: SrtFile):
     print("Change captions numeration")
 
@@ -46,17 +58,9 @@ def save_srt_file(srt: SrtFile):
 
 def add_caption_at_the_end(srt: SrtFile):
     print("Insert the text")
+    texts = get_caption_text_list()
 
-    texts = []
-
-    string = "0"
-    while string:
-        string = input()
-        texts.append(string)
-
-    texts.pop()
-
-    time = input("Please enter the timestamp value\nEx: 00:19:49,300\n-> ")
+    time = input("Please enter the timestamp duration\nEx: 00:19:49,300\n-> ")
     srt.add_caption_at_the_end(texts,time)
 
 def default(_srt):
@@ -65,7 +69,7 @@ def default(_srt):
 def quit(_srt):
     print("Bye, see you next time")
 
-def main(file_name):
+def main(file_name: str):
     
     switch = {
         "1": change_captions_numeration,

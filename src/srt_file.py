@@ -13,6 +13,10 @@ class SrtFile:
     def __init__(self,file_name: str):
 
         self.file_name = file_name.strip()
+
+        if not self.file_name.endswith(".srt"):
+            raise Exception(f"Erro! O Arquivo {self.file_name} não é um arquivo .SRT")
+            
         self.num_of_captions = 0
         self.all_captions = []
 
@@ -85,7 +89,7 @@ class SrtFile:
 
             caption[SrtFile.CAPTION_START_KEY] = self._fix_timestamp(caption_start_timedelta + time_timedelta)
             caption[SrtFile.CAPTION_END_KEY]   = self._fix_timestamp(caption_end_timedelta   + time_timedelta)
-    
+
     def add_caption_at_the_end(self, texts, caption_duration):
 
         self.num_of_captions += 1
