@@ -1,4 +1,5 @@
 import datetime as dt
+import re
 
 class SrtFile:
 
@@ -16,7 +17,7 @@ class SrtFile:
 
         if not self.file_name.endswith(".srt"):
             raise Exception(f"Erro! O Arquivo {self.file_name} não é um arquivo .SRT")
-            
+
         self.num_of_captions = 0
         self.all_captions = []
 
@@ -47,6 +48,12 @@ class SrtFile:
 
                     timestamps = curr_line.split(" --> ")
                     
+                    if self.__match_time_regex(timestamps[SrtFile.START_TIME]):
+                        raise Exception(f"Erro! O regex {timestamps[SrtFile.START_TIME]} não é valido no arquivo {self.file_name} ")
+
+                    if self.__match_time_regex(timestamps[SrtFile.END_TIME]):
+                        raise Exception(f"Erro! O regex {timestamps[SrtFile.END_TIME]} não é valido no arquivo {self.file_name} ")
+
                     caption_information[SrtFile.CAPTION_START_KEY]  = timestamps[SrtFile.START_TIME]
                     caption_information[SrtFile.CAPTION_END_KEY]    = timestamps[SrtFile.END_TIME]
 
@@ -80,6 +87,9 @@ class SrtFile:
             first_number += 1
 
     def add_time_to_timestamps(self,time):
+
+        if not self.__match_time_regex(time):
+            raise Exception("Erro! O tempo especificado não é compatível!")
 
         for caption in self.all_captions:
 
@@ -133,6 +143,9 @@ class SrtFile:
 
     def _fix_timestamp(self,timestamp: dt.timedelta):
         return ('0' + str(timestamp)[0:11]).replace(".", ",")
+
+    def __match_time_regex(self,time):
+        return (not re.findall("(\d{0,3}:\d{0,3}:\d{0,3},\d{0,3})",time))
 
     def __str__(self) -> str:
 
