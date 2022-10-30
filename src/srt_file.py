@@ -16,7 +16,7 @@ class SrtFile:
         self.file_name = file_name.strip()
 
         if not self.file_name.endswith(".srt"):
-            raise Exception(f"Erro! O Arquivo {self.file_name} não é um arquivo .SRT")
+            raise Exception(f"Error! The file {self.file_name} is not a .srt file!")
 
         self.num_of_captions = 0
         self.all_captions = []
@@ -49,10 +49,10 @@ class SrtFile:
                     timestamps = curr_line.split(" --> ")
                     
                     if self.__match_time_regex(timestamps[SrtFile.START_TIME]):
-                        raise Exception(f"Erro! O regex {timestamps[SrtFile.START_TIME]} não é valido no arquivo {self.file_name} ")
+                        raise Exception(f"Error! The regex {timestamps[SrtFile.START_TIME]} is not valid for the file {self.file_name} ")
 
                     if self.__match_time_regex(timestamps[SrtFile.END_TIME]):
-                        raise Exception(f"Erro! O regex {timestamps[SrtFile.END_TIME]} não é valido no arquivo {self.file_name} ")
+                        raise Exception(f"Error! The regex {timestamps[SrtFile.END_TIME]} is not valid for the file {self.file_name} ")
 
                     caption_information[SrtFile.CAPTION_START_KEY]  = timestamps[SrtFile.START_TIME]
                     caption_information[SrtFile.CAPTION_END_KEY]    = timestamps[SrtFile.END_TIME]
@@ -89,7 +89,7 @@ class SrtFile:
     def add_time_to_timestamps(self,time):
 
         if not self.__match_time_regex(time):
-            raise Exception("Erro! O tempo especificado não é compatível!")
+            raise Exception("Error! The timestamp specified is not compatible!")
 
         for caption in self.all_captions:
 
