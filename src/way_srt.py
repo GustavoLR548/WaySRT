@@ -1,4 +1,3 @@
-from curses.ascii import isblank
 from srt_file import SrtFile
 import sys
 from os import system, name as os_name
