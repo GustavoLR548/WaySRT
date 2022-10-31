@@ -1,7 +1,7 @@
-import datetime as dt
 import re
 from dataclasses import dataclass
 from datetime import timedelta
+from typing import List
 
 
 @dataclass
@@ -14,6 +14,8 @@ class Caption():
 
 class SrtFile:
 
+    captions = List[Caption]
+
     START_TIME = 0
     END_TIME = 1
 
@@ -22,19 +24,49 @@ class SrtFile:
     CAPTION_START_KEY  = "caption_start"
     CAPTION_END_KEY    = "caption_end"
 
+
+    _CAPTION_REGEX = re.compile(r"(?<index>:\d+)\s*\n(?<shr>:\d{0,3}):(?<smin>:\d{0,3}):(?<ssec>:\d{0,3}),(?<sml>:\d{0,3})\s+-->\s+(?<ehr>:\d{0,3}):(?<emin>:\d{0,3}):(?<esec>:\d{0,3}),(?<eml>:\d{0,3})(?<content>:(?:[^\n]+)\n)+\n")
+
     def __init__(self,file_name: str):
 
         self.file_name = file_name.strip()
-
-        self.num_of_captions = 0
-        self.all_captions = []
-
-        self._read_file()      
+        self._read_file()
     
+
+    def parse_str(self, text: str) -> List[Caption]:
+        captions = List[Caption]
+
+        for n, m in enumerate(re.findall(self._CAPTION_REGEX, text)):
+            captions.append(
+                Caption(
+                    index=n,
+                    start_time=timedelta(
+                        hours=m.group("shr"),
+                        minutes=m.group("smin"),
+                        seconds=m.group("ssec"),
+                        milliseconds=m.group("sml")
+                    ),
+                    end_time=timedelta(
+                        hours=m.group("ehr"),
+                        minutes=m.group("emin"),
+                        seconds=m.group("esec"),
+                        milliseconds=m.group("eml")
+                    ),
+                    caption=m.group("content")
+                )
+            )
+        
+        return captions
+
+
+
+            
+
     def _read_file(self):
 
         with open(self.file_name, 'r') as srt_file:
             file_lines = srt_file.readlines()
+
 
             caption_information = {}
             caption_information[SrtFile.CAPTION_TEXT_KEY] = []
@@ -147,9 +179,9 @@ class SrtFile:
         second            = tmp.split(",")[0]
         milliseconds      = tmp.split(",")[1]
 
-        return dt.timedelta(hours=int(hour), minutes=int(minute), seconds=int(second), milliseconds=int(milliseconds))
+        return timedelta(hours=int(hour), minutes=int(minute), seconds=int(second), milliseconds=int(milliseconds))
 
-    def _fix_timestamp(self,timestamp: dt.timedelta):
+    def _fix_timestamp(self,timestamp: timedelta):
         return ('0' + str(timestamp)[0:11]).replace(".", ",")
 
     def __match_time_regex(self,time):
