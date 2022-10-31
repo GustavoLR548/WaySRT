@@ -1,5 +1,16 @@
 import datetime as dt
 import re
+from dataclasses import dataclass
+from datetime import timedelta
+
+
+@dataclass
+class Caption():
+    index: int
+    start_time: timedelta
+    end_time: timedelta
+    caption: str
+    
 
 class SrtFile:
 
@@ -162,4 +173,5 @@ class SrtFile:
 
             string += '\n'
 
-        return string  
+        return string
+
