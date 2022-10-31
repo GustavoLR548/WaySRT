@@ -15,9 +15,6 @@ class SrtFile:
 
         self.file_name = file_name.strip()
 
-        if not self.file_name.endswith(".srt"):
-            raise Exception(f"Error! The file {self.file_name} is not a .srt file!")
-
         self.num_of_captions = 0
         self.all_captions = []
 
