@@ -23,7 +23,7 @@ class SRTParser:
 
 
     def __init__(self) -> None:
-        self.captions = List[Caption]
+        self.captions: List[Caption] = []
 
     START_TIME = 0
     END_TIME = 1
@@ -46,27 +46,28 @@ class SRTParser:
 
     @classmethod
     def parse_str(cls, text: str) -> List[Caption]:
-        captions = List[Caption]
+        captions: List[Caption] = []
 
-        for n, m in enumerate(re.findall(SRTParser._CAPTION_REGEX, text)):
+        for n, m in enumerate(re.finditer(SRTParser._CAPTION_REGEX, text)):
             captions.append(
                 Caption(
-                    index=n,
+                    index=n+1,
                     start_time=timedelta(
-                        hours=m.group("shr"),
-                        minutes=m.group("smin"),
-                        seconds=m.group("ssec"),
-                        milliseconds=m.group("sml")
+                        hours=int(m.group("shr")),
+                        minutes=int(m.group("smin")),
+                        seconds=int(m.group("ssec")),
+                        milliseconds=int(m.group("sml"))
                     ),
                     end_time=timedelta(
-                        hours=m.group("ehr"),
-                        minutes=m.group("emin"),
-                        seconds=m.group("esec"),
-                        milliseconds=m.group("eml")
+                        hours=int(m.group("ehr")),
+                        minutes=int(m.group("emin")),
+                        seconds=int(m.group("esec")),
+                        milliseconds=int(m.group("eml"))
                     ),
-                    caption=m.group("content")
+                    caption=int(m.group("content"))
                 )
             )
+
         
         return captions
 
@@ -115,28 +116,18 @@ class SRTParser:
             caption[SRTParser.CAPTION_START_KEY] = self._fix_timestamp(caption_start_timedelta + time_timedelta)
             caption[SRTParser.CAPTION_END_KEY]   = self._fix_timestamp(caption_end_timedelta   + time_timedelta)
 
-    def add_caption_at_the_end(self, texts, caption_duration):
+    def add_caption_at_the_end(self, text: str, caption_duration: timedelta):
+        start_time = self.captions[-1].end_time if len(self.captions) > 0 else timedelta()
 
-        self.num_of_captions += 1
-        caption_numeration = self.num_of_captions
+        self.captions.append(
+            Caption(
+                index=len(self.captions)+1,
+                start_time=start_time,
+                end_time=start_time+caption_duration,
+                caption=text
+            )
+        )
 
-        start_time = self.all_captions[-1][SRTParser.CAPTION_END_KEY]
-
-        caption_duration_timedelta = self._get_time_information(caption_duration)
-
-        end_time_timedelta = self._get_time_information(start_time)
-        end_time_timedelta += caption_duration_timedelta
-        end_time = self._fix_timestamp(end_time_timedelta)
-
-        caption_information = {
-            SRTParser.CAPTION_NUMBER_KEY : f'{caption_numeration}',
-            SRTParser.CAPTION_START_KEY : f'{start_time}',
-            SRTParser.CAPTION_END_KEY : f'{end_time}'
-        }
-
-        caption_information[SRTParser.CAPTION_TEXT_KEY] = texts
-
-        self.all_captions.append(caption_information)
 
     def reduce_time_to_timestamps(self,time):
 
