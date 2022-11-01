@@ -21,9 +21,6 @@ I'm going to count down !
 00:38:54,321 --> 00:38:55,241 
 In five..."""
 
-    def test_caption(self):
-        print(str(Caption(1,timedelta(minutes=1), timedelta(minutes=2), caption="asdasd")))
-
     
 
 
