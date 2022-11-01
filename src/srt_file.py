@@ -12,10 +12,9 @@ class Caption():
     caption: str
 
     def __str__(self) -> str:
-        start = datetime.min + self.start_time
-        end = datetime.min + self.end_time
         return f"""{self.index}
-{start.strftime("%HHH:%MMM:%SSS")},{(start.microsecond/1000)%1000} --> {end.strftime("%HHH:%MMM:%SSS")},{(end.microsecond/1000)%1000}
+{self.start_time.seconds//3600 :02}:{(self.start_time.seconds//60)%60 :02}:{self.start_time.seconds%60 :02},{self.start_time.microseconds//1000 :03} \
+--> {self.end_time.seconds//3600 :02}:{(self.end_time.seconds//60)%60 :02}:{self.end_time.seconds%60 :02},{self.end_time.microseconds//1000 :03}
 {self.caption}
         """
     
