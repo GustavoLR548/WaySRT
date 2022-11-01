@@ -1,4 +1,4 @@
-from srt_file import SrtFile
+from srt_file import SRTParser
 import sys
 from os import system, name as os_name
 
@@ -21,7 +21,7 @@ def get_caption_text_list():
 
     return texts
 
-def change_captions_numeration(srt: SrtFile):
+def change_captions_numeration(srt: SRTParser):
     print("Change captions numeration")
 
     new_enumeration = input("Please enter the new enumeration: ")
@@ -30,7 +30,7 @@ def change_captions_numeration(srt: SrtFile):
 
     srt.change_captions_numeration(start_enumeration)
 
-def add_time_to_captions_timestamps(srt: SrtFile):
+def add_time_to_captions_timestamps(srt: SRTParser):
     print("Add time to captions")
 
     timestamp = input("Please enter the timestamp value\nEx: 00:19:49,300\n-> ")
@@ -39,7 +39,7 @@ def add_time_to_captions_timestamps(srt: SrtFile):
 
     print("Time added to captions")
 
-def reduce_time_to_captions_timestamps(srt: SrtFile):
+def reduce_time_to_captions_timestamps(srt: SRTParser):
     print("Reduce time to captions")
 
     timestamp = input("Please enter the timestamp value\nEx: 00:19:49,300\n-> ")
@@ -48,14 +48,14 @@ def reduce_time_to_captions_timestamps(srt: SrtFile):
 
     print("Time reduced to captions")
 
-def save_srt_file(srt: SrtFile):
+def save_srt_file(srt: SRTParser):
     print("Saving srt file")
 
     srt.save_file()
 
     print("Saving process completed!")
 
-def add_caption_at_the_end(srt: SrtFile):
+def add_caption_at_the_end(srt: SRTParser):
     print("Insert the text")
     texts = get_caption_text_list()
 
@@ -80,7 +80,7 @@ def main(file_name: str):
         "0": quit
     }
 
-    srt = SrtFile(file_name)
+    srt = SRTParser(file_name)
 
     instruction = None
 
